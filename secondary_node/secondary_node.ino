@@ -5,12 +5,6 @@
 #include <FirebaseESP32.h>
 #include <addons/RTDBHelper.h>
 
-const char* ssid = "Ken's iPhone";
-const char* password = "hihihoho";
-
-#define FIREBASE_HOST "neurox-app-default-rtdb.asia-southeast1.firebasedatabase.app"
-#define FIREBASE_AUTH "52WJ3w6szb6vnLtw6xNowrA9EX39xLDMLn9dvy7D"
-
 uint8_t mainNodeMac[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 #define SDA_PIN 4
