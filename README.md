@@ -1,104 +1,84 @@
-# NEUROX Main Node
+# NEUROX Hardware
 
-The Main Node is the main controller for the actuator and temperature-control system of NEUROX.
+This folder contains the hardware and wiring documentation for the complete NEUROX rehabilitation system.
 
-It uses an ESP32 Dev Module to control the water therapy, pneumatic massage, and heating system.
+The system consists of two ESP32-based controller nodes that work together to provide motion tracking, vibration feedback, temperature-controlled water therapy, and pneumatic massage.
 
-## Functions
+## System Components
 
-The Main Node controls and monitors:
+### Main Node
 
+The Main Node uses an ESP32 Dev Module to control the therapy actuators and monitor water temperature.
+
+It includes:
+
+* ESP32 Dev Module
+* 2 × DS18B20 temperature sensors
 * Warm water pump
 * Cold water pump
 * Air pump
 * Solenoid valve
 * Heating pad
-* 2 × DS18B20 temperature sensors
+* Relay modules
+* 12 V battery supply
 
-## Hardware
+### Secondary Node
 
-| Component        | Purpose                                   |
-| ---------------- | ----------------------------------------- |
-| ESP32 Dev Module | Main controller                           |
-| DS18B20 × 2      | Monitor water temperatures                |
-| Warm water pump  | Circulate warm water                      |
-| Cold water pump  | Circulate cold water                      |
-| Air pump         | Generate air pressure                     |
-| Solenoid valve   | Release air from the pneumatic system     |
-| Heating pad      | Heat the warm water                       |
-| Relay modules    | Control the pumps, valve, and heating pad |
-| 12 V battery     | Power the actuators                       |
+The Secondary Node uses an ESP32-C3 for motion tracking and vibration feedback.
 
-## Pin Configuration
+It includes:
 
-| Component             | ESP32 GPIO |
-| --------------------- | ---------: |
-| Air pump relay        |     GPIO 4 |
-| Warm water pump relay |    GPIO 19 |
-| Cold water pump relay |    GPIO 21 |
-| Solenoid valve relay  |    GPIO 18 |
-| Heating pad relay     |    GPIO 22 |
-| Warm water DS18B20    |    GPIO 17 |
-| Cold water DS18B20    |    GPIO 16 |
+* ESP32-C3
+* 2 × MPU6050 IMU sensors
+* 2 × vibration motors
+* Low-voltage power supply
 
-The relay modules use active-LOW logic:
+## Wiring Diagram
 
-* `LOW` = ON
-* `HIGH` = OFF
+The complete wiring diagram shows the connections between the two controller nodes, sensors, actuators, relay modules, and power supplies.
 
-## Temperature Monitoring
+![NEUROX System Wiring Diagram](fritzing/NEUROX_Wiring.png)
 
-Two DS18B20 temperature sensors are used to monitor the water temperatures.
+## Fritzing File
 
-* One sensor monitors the warm water.
-* One sensor monitors the cold water.
-
-The current target temperature for the warm water system is approximately **38°C**.
-
-The heating pad is activated to heat the warm water and is switched off when the target temperature is reached.
-
-## Water Therapy
-
-The Main Node controls two water pumps:
-
-* Warm water pump
-* Cold water pump
-
-The pumps are used to circulate water through the rehabilitation sleeve for temperature-based therapy.
-
-## Pneumatic Massage
-
-The Main Node controls an air pump and solenoid valve for the pneumatic massage system.
-
-The air pump inflates the pneumatic system, while the solenoid valve is used to release the air.
-
-The system uses timed inflation and release cycles for the massage function.
-
-## Firebase
-
-The Main Node can connect to Firebase to store and monitor system data.
-
-Firebase credentials are stored locally in:
+The editable Fritzing project is provided below:
 
 ```text
-secrets.h
+fritzing/NEUROX_Wiring.fzz
 ```
 
-The `secrets.h` file must not be uploaded to GitHub.
+The `.fzz` file can be opened and edited using Fritzing.
 
-A template can be provided using:
+## Note on Fritzing Components
 
-```text
-secrets.example.h
-```
+Some of the actual components used in NEUROX are not available in the Fritzing component library.
 
-## Project Structure
+Therefore, some components in the diagram are represented using alternative components or similar labels for visual and wiring representation.
 
-```text
-main_node/
-├── main_node.ino
-├── secrets.h
-└── README.md
-```
+These alternative components are used only to show the intended connections and should not be taken as the exact physical components used in the final prototype.
 
-`se
+The actual component specifications and hardware should be referred to when building the physical system.
+
+## Power System
+
+The actuator components are powered from a 12 V battery supply.
+
+The ESP32 controllers and low-voltage sensors are powered separately from their appropriate power supplies.
+
+Relay modules are used to switch the higher-power actuator loads while allowing the ESP32 to control them using GPIO signals.
+
+## Communication
+
+The Main Node and Secondary Node communicate wirelessly using ESP-NOW.
+
+The Secondary Node handles motion detection and vibration feedback, while the Main Node handles the therapy actuators and temperature monitoring.
+
+## Hardware Documentation
+
+This branch is intended for the overall NEUROX hardware documentation and combined wiring diagrams.
+
+Individual firmware can be found in the following branches:
+
+* `main-node` - Main Node firmware
+* `secondary-node` - Secondary Node firmware
+* `web` - NEUROX web application
