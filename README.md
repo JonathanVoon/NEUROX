@@ -1,51 +1,124 @@
-# NEUROX - starter web app
+# NEUROX
 
-A starting point for the Patient view + Physiotherapist dashboard from the
-NEUROX proposal. Everything here runs on fake data in `src/data/mockData.js`
-so you can see it working immediately, before Firebase or the hardware team's
-data feed is ready.
+NEUROX is a smart post-stroke rehabilitation system designed to support guided and monitored rehabilitation. It combines motion tracking, vibration feedback, pneumatic massage, and temperature-controlled warm and cold water therapy.
 
-## Run it
+## System Structure
+
+The NEUROX system consists of three main parts:
+
+* **Web App** - Patient interface and physiotherapist dashboard for monitoring rehabilitation progress.
+* **Main Node** - ESP32 Dev Module responsible for temperature monitoring, warm and cold water pumps, heating, pneumatic massage, and solenoid valve control.
+* **Secondary Node** - ESP32-C3 responsible for MPU6050 motion tracking and vibration feedback.
+
+## Repository Branches
+
+| Branch           | Description                                            |
+| ---------------- | ------------------------------------------------------ |
+| `web`            | NEUROX web application                                 |
+| `main-node`      | Main ESP32 firmware and actuator control               |
+| `secondary-node` | ESP32-C3 firmware, IMU tracking and vibration feedback |
+
+## Web App
+
+The web application provides two main views:
+
+* `/patient` - Patient rehabilitation interface, including session information, progress, badges, and recent sessions.
+* `/dashboard` - Physiotherapist dashboard for monitoring patients, rehabilitation progress, completion rate, and range of motion.
+
+The web app currently uses mock data while the Firebase backend and hardware data integration are being developed.
+
+### Run the Web App
 
 ```bash
 npm install
 npm run dev
 ```
 
-Then open the URL it prints (usually http://localhost:5173). Resize your
-browser window down to phone width to see the mobile layout (bottom tab bar
-instead of the sidebar) - this is the layout Capacitor will wrap later.
+Open the local URL provided by Vite, usually:
 
-## What's here
+```text
+http://localhost:5173
+```
 
-- `/patient` - the patient-facing screen: streak, start-session button,
-  weekly progress, badges, recent sessions.
-- `/dashboard` - the physiotherapist screen: patient list, stagnation alert,
-  completion rate, and a range-of-motion trend chart (Recharts).
-- `src/data/mockData.js` - all the fake data. Replace this file's contents
-  with real Firestore reads once your backend is set up; keep the same
-  shape (field names) so the page components don't need to change.
+## Main Node
 
-## Next steps (matches the build plan)
+The Main Node uses an ESP32 Dev Module to control the rehabilitation actuators and monitor water temperature.
 
-1. Tweak the mock data / copy to match your real content.
-2. Set up a Firebase project (Firestore + Auth).
-3. Agree the data schema with whoever's coding the ESP32 firmware - the
-   field names in `mockData.js` are a reasonable starting proposal
-   (sessionId, romScore, completed, etc.) but confirm before building on them.
-4. Swap the imports in `PatientView.jsx` / `DashboardView.jsx` from
-   `mockData.js` to real Firestore queries.
-5. Add Firebase Auth so a patient login lands on `/patient` and a
-   physiotherapist login lands on `/dashboard`.
-6. Deploy with Firebase Hosting (`firebase deploy`) to get a shareable link.
-7. Once it looks right at phone width, wrap it with Capacitor for an
-   installable mobile app.
+Main functions include:
 
-## Design notes
+* Warm water temperature monitoring using DS18B20
+* Cold water temperature monitoring using DS18B20
+* Heating pad control
+* Warm water pump control
+* Cold water pump control
+* Air pump control
+* Solenoid valve control
+* Pneumatic massage cycles
+* Communication with the Secondary Node using ESP-NOW
+* Firebase data updates
 
-Palette is teal/ink/paper with an amber accent - deliberately not the
-generic cream-and-terracotta or dark-mode-neon look, and picked to read as
-calm and clinical rather than sterile. Headings use Fraunces (a warm serif),
-body/UI text uses Inter. Feel free to swap fonts/colors in
-`tailwind.config.js` - they're all defined as named tokens there, not
-scattered through the components.
+## Secondary Node
+
+The Secondary Node uses an ESP32-C3 with two MPU6050 motion sensors and two vibration motors.
+
+Main functions include:
+
+* Monitoring movement using two MPU6050 IMUs
+* Detecting when the user's movement becomes still
+* Providing vibration feedback
+* Sending commands to the Main Node using ESP-NOW
+* Uploading movement and motor status to Firebase
+
+## System Communication
+
+The general system flow is:
+
+```text
+                 NEUROX WEB APP
+                       │
+                    Firebase
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+     MAIN NODE                 SECONDARY NODE
+     ESP32 Dev                  ESP32-C3
+          │                         │
+     ┌────┼────┬────┐          ┌────┴────┐
+     │    │    │    │          │         │
+   Water Heater Air  Valve     IMUs    Motors
+   Pumps        Pump
+          │
+          └──── ESP-NOW ──────────────┘
+```
+
+## Technologies
+
+* ESP32
+* ESP32-C3
+* MPU6050
+* DS18B20
+* Firebase
+* React
+* Vite
+* Tailwind CSS
+* ESP-NOW
+* Recharts
+
+## Development
+
+The project is currently under development. The web application initially uses mock data while Firebase integration and hardware communication are being developed and tested.
+
+Future development includes:
+
+1. Connect the web app to Firebase.
+2. Integrate real-time ESP32 sensor data.
+3. Finalise the Firebase data structure.
+4. Add authentication for patients and physiotherapists.
+5. Improve rehabilitation monitoring and analytics.
+6. Test the complete hardware and software system.
+7. Deploy the web application.
+8. Integrate the web app with Capacitor for mobile deployment.
+
+## Project Goal
+
+NEUROX aims to provide an affordable and integrated rehabilitation platform that combines physical therapy assistance, sensor-based movement monitoring, temperature therapy, pneumatic massage, and digital progress tracking.
